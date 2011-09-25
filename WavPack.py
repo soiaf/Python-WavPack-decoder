@@ -86,7 +86,7 @@ ID_RIFF_HEADER   = 0x21;
 ID_RIFF_TRAILER  = 0x22;
 ID_REPLAY_GAIN   = 0x23;
 ID_CUESHEET      = 0x24;
-ID_CONFIG_BLOCK	= 0x25;
+ID_CONFIG_BLOCK    = 0x25;
 ID_MD5_CHECKSUM  = 0x26;
 ID_SAMPLE_RATE   = 0x27;
 
@@ -241,24 +241,24 @@ class decorr_pass:
 
 class WavpackHeader :
     ckID = [0] * 4
-    ckSize = 0	
+    ckSize = 0    
     version = 0
     track_no = 0
-    index_no = 0	
+    index_no = 0    
     total_samples = 0
     block_index = 0
     block_samples = 0
     flags = 0
-    crc = 0	
-    status = 0;	# 1 means error
+    crc = 0    
+    status = 0;    # 1 means error
 
 class WavpackMetadata :
     def __init__(self):
         self.byte_length = 0
         self.data = [0] * 1024
         self.id = 0
-        self.hasdata = 0;	# 0 does not have data, 1 has data
-        self.status = 0;	# 0 ok, 1 error
+        self.hasdata = 0;    # 0 does not have data, 1 has data
+        self.status = 0;    # 0 ok, 1 error
 
 class WavpackConfig :
     bits_per_sample = 0
@@ -291,7 +291,7 @@ class WavpackStream:
         num_terms = 0
         mute_error = 0
         sample_index = 0
-        crc = 0	
+        crc = 0    
 
         int32_sent_bits = 0
         int32_zeros = 0
@@ -333,12 +333,12 @@ class WavpackContext:
         self.infile = 0
         self.total_samples = 0
         self.crc_errors = 0
-        self.first_flags = 0		
+        self.first_flags = 0        
         self.open_flags = 0
         self.norm_offset = 0
         self.reduced_channels = 0
         self.lossy_blocks = 0
-        self.status = 0;	# 0 ok, 1 error
+        self.status = 0;    # 0 ok, 1 error
 
 class case_selector(Exception):
    def __init__(self, value): # overridden to ensure we've got a value argument
@@ -793,14 +793,10 @@ def getbit(bs) :
         uns_buf = ord(bs.buf[bs.buf_index]) & 0xff
         bs.sr = uns_buf;
 
-    if ((bs.sr & 1) > 0) :
-        bs.sr = bs.sr >> 1;
-        bs.bitval = 1;
-        return bs;
-    else :
-        bs.sr = bs.sr >> 1;
-        bs.bitval = 0;
-        return bs;
+    bs.bitval = (bs.sr & 1);
+    bs.sr = bs.sr >> 1;
+
+    return bs;
 
 
 def getbits(nbits, bs) :
@@ -1753,18 +1749,12 @@ def decorr_stereo_pass(dpp, mybuffer, sample_count, buf_idx) :
                 if (dpp.samples_A[0] != 0 and mybuffer[bptr_counter] != 0 ) :
                     weight_A = weight_A - delta
                     if weight_A < -1024:
-                        if (weight_A < 0) :
-                            weight_A = -1024;
-                        else :
-                            weight_A = 1024
+                        weight_A = -1024
             else :
                 if (dpp.samples_A[0] != 0 and mybuffer[bptr_counter] != 0 ) :
                     weight_A = weight_A + delta
                     if weight_A > 1024 :
-                        if (weight_A < 0) :
-                            weight_A = -1024;
-                        else :
-                            weight_A = 1024;
+                        weight_A = 1024
 
             mybuffer[bptr_counter] = sam_A;
             dpp.samples_A[0] = mybuffer[bptr_counter + 1] +  ((weight_B * sam_A + 512) >> 10);
@@ -1773,18 +1763,12 @@ def decorr_stereo_pass(dpp, mybuffer, sample_count, buf_idx) :
                 if (sam_A != 0 and mybuffer[bptr_counter + 1] != 0 ) :
                     weight_B = weight_B - delta
                     if weight_B < -1024 :
-                        if (weight_B < 0) :
-                            weight_B = -1024;
-                        else :
-                            weight_B = 1024;
+                        weight_B = -1024
             else :
                 if (sam_A != 0 and mybuffer[bptr_counter + 1] != 0 ) :
                     weight_B = weight_B + delta
                     if weight_B > 1024 :
-                        if (weight_B < 0) :
-                            weight_B = -1024;
-                        else :
-                            weight_B = 1024;
+                        weight_B = 1024
 
             mybuffer[bptr_counter + 1] = dpp.samples_A[0]
 
@@ -1799,18 +1783,12 @@ def decorr_stereo_pass(dpp, mybuffer, sample_count, buf_idx) :
                 if (dpp.samples_B[0] != 0 and mybuffer[bptr_counter + 1] != 0 ) :
                     weight_B = weight_B - delta
                     if weight_B < -1024 :
-                        if (weight_B < 0) :
-                            weight_B = -1024
-                        else :
-                            weight_B = 1024
+                        weight_B = -1024
             else :
                 if (dpp.samples_B[0] != 0 and mybuffer[bptr_counter + 1] != 0 ) :
                     weight_B = weight_B + delta
                     if weight_B > 1024 :
-                        if (weight_B < 0) :
-                            weight_B = -1024
-                        else :
-                            weight_B = 1024
+                        weight_B = 1024
 
             mybuffer[bptr_counter + 1] = sam_B
 
@@ -1820,18 +1798,12 @@ def decorr_stereo_pass(dpp, mybuffer, sample_count, buf_idx) :
                 if (sam_B != 0 and mybuffer[bptr_counter] != 0 ) :
                     weight_A = weight_A - delta
                     if weight_A < -1024 :
-                        if (weight_A < 0) :
-                            weight_A = -1024
-                        else :
-                            weight_A = 1024
+                        weight_A = -1024
             else :
                 if (sam_B != 0 and mybuffer[bptr_counter] != 0 ) :
                     weight_A = weight_A + delta
                     if weight_A > 1024 :
-                        if (weight_A < 0) :
-                            weight_A = -1024;
-                        else :
-                            weight_A = 1024
+                        weight_A = 1024
 
             mybuffer[bptr_counter] = dpp.samples_B[0];
 
@@ -1846,18 +1818,12 @@ def decorr_stereo_pass(dpp, mybuffer, sample_count, buf_idx) :
                 if (dpp.samples_A[0] != 0 and mybuffer[bptr_counter] != 0 ) :
                     weight_A = weight_A - delta
                     if weight_A < -1024 :
-                        if (weight_A < 0) :
-                            weight_A = -1024
-                        else :
-                            weight_A = 1024
+                        weight_A = -1024
             else :
                 if (dpp.samples_A[0] != 0 and mybuffer[bptr_counter] != 0 ) :
                     weight_A = weight_A + delta
                     if weight_A > 1024 :
-                        if (weight_A < 0) :
-                            weight_A = -1024
-                        else :
-                            weight_A = 1024
+                        weight_A = 1024
 
             sam_B = mybuffer[bptr_counter + 1] + ((weight_B * dpp.samples_B[0] + 512) >> 10)
 
@@ -1865,18 +1831,12 @@ def decorr_stereo_pass(dpp, mybuffer, sample_count, buf_idx) :
                 if (dpp.samples_B[0] != 0 and mybuffer[bptr_counter + 1] != 0 ) :
                     weight_B = weight_B - delta
                     if weight_B < -1024 :
-                        if (weight_B < 0) :
-                            weight_B = -1024
-                        else :
-                            weight_B = 1024
+                        weight_B = -1024
             else :
                 if (dpp.samples_B[0] != 0 and mybuffer[bptr_counter + 1] != 0 ) :
                     weight_B = weight_B + delta
                     if weight_B > 1024 :
-                        if (weight_B < 0) :
-                            weight_B = -1024
-                        else :
-                            weight_B = 1024
+                        weight_B = 1024
 
             mybuffer[bptr_counter] = dpp.samples_B[0] = sam_A
             mybuffer[bptr_counter + 1] = dpp.samples_A[0] = sam_B
@@ -1957,15 +1917,22 @@ def decorr_stereo_pass_cont(dpp, mybuffer, sample_count, buf_idx) :
             sam_B = mybuffer[buffer_index]
             mybuffer[buffer_index] = ((weight_A *  sam_A + 512) >> 10) + sam_B
 
-            if (sam_A != 0 and sam_B != 0) :
-                weight_A += (((sam_A ^ sam_B) >> 30) | 1) * delta;
+            if (sam_A != 0 and sam_B != 0) : 
+                if (sam_A ^ sam_B) < 0 :
+                    weight_A -= delta; 
+                else :
+                    weight_A += delta;
 
             sam_A = 2 * mybuffer[buffer_index - 1] - mybuffer[buffer_index - 3]
             sam_B = mybuffer[buffer_index + 1]
             mybuffer[buffer_index + 1] = ((weight_B * sam_A + 512) >> 10) + sam_B
 
-            if (sam_A != 0 and sam_B != 0) :
-                weight_B += (((sam_A ^ sam_B) >> 30) | 1) * delta;
+            if (sam_A != 0 and sam_B != 0) : 
+                if (sam_A ^ sam_B) < 0 :
+                    weight_B -= delta; 
+                else :
+                    weight_B += delta;            
+            
 
         buffer_index = end_index
         
@@ -1980,15 +1947,22 @@ def decorr_stereo_pass_cont(dpp, mybuffer, sample_count, buf_idx) :
             sam_B = mybuffer[buffer_index]
             mybuffer[buffer_index] = ((weight_A * sam_A + 512) >> 10) + sam_B
 
-            if (sam_A != 0 and sam_B != 0) :
-                weight_A += (((sam_A ^ sam_B) >> 30) | 1) * delta;
+            if (sam_A != 0 and sam_B != 0) : 
+                if (sam_A ^ sam_B) < 0 :
+                    weight_A -= delta; 
+                else :
+                    weight_A += delta;
+
 
             sam_A = (3 * mybuffer[buffer_index - 1] - mybuffer[buffer_index - 3]) >> 1
             sam_B = mybuffer[buffer_index + 1]
             mybuffer[buffer_index + 1] = ((weight_B * sam_A + 512) >> 10) + sam_B
 
-            if (sam_A != 0 and sam_B != 0) :
-                weight_B += (((sam_A ^ sam_B) >> 30) | 1) * delta
+            if (sam_A != 0 and sam_B != 0) : 
+                if (sam_A ^ sam_B) < 0 :
+                    weight_B -= delta; 
+                else :
+                    weight_B += delta;
 
         buffer_index = end_index
 
@@ -2008,18 +1982,12 @@ def decorr_stereo_pass_cont(dpp, mybuffer, sample_count, buf_idx) :
                 if (mybuffer[buffer_index - 1] != 0 and sam_A != 0 ) :
                     weight_A = weight_A - delta
                     if weight_A < -1024 :
-                        if (weight_A < 0) :
-                            weight_A = -1024;
-                        else :
-                            weight_A = 1024;
+                        weight_A = -1024
             else :
                 if (mybuffer[buffer_index - 1] != 0 and sam_A != 0 ) :
                     weight_A = weight_A + delta
                     if (weight_A > 1024) :
-                        if (weight_A < 0) :
-                            weight_A = -1024;
-                        else :
-                            weight_A = 1024;
+                        weight_A = 1024
 
             sam_A = mybuffer[buffer_index + 1]
             mybuffer[buffer_index + 1] = ((weight_B *  mybuffer[buffer_index] + 512) >> 10) + sam_A
@@ -2028,19 +1996,12 @@ def decorr_stereo_pass_cont(dpp, mybuffer, sample_count, buf_idx) :
                 if (mybuffer[buffer_index] != 0 and sam_A != 0 ) :
                     weight_B = weight_B - delta
                     if weight_B < -1024 :
-                        if (weight_B < 0) :
-                            weight_B = -1024
-                        else :
-                            weight_B = 1024
+                        weight_B = -1024
             else :
                 if (mybuffer[buffer_index] != 0 and sam_A != 0 ) :
                     weight_B = weight_B + delta
                     if weight_B > 1024 :
-                        if (weight_B < 0) :
-                            weight_B = -1024
-                        else :
-                            weight_B = 1024
-
+                        weight_B = 1024
 
         buffer_index = end_index
         
@@ -2058,18 +2019,12 @@ def decorr_stereo_pass_cont(dpp, mybuffer, sample_count, buf_idx) :
                 if (mybuffer[buffer_index - 2] != 0 and sam_A != 0 ) :
                     weight_B = weight_B - delta
                     if weight_B < -1024 :
-                        if (weight_B < 0) :
-                            weight_B = -1024;
-                        else :
-                            weight_B = 1024;
+                        weight_B = -1024
             else :
                 if (mybuffer[buffer_index - 2] != 0 and sam_A != 0 ) :
                     weight_B = weight_B + delta
                     if weight_B > 1024 :
-                        if (weight_B < 0) :
-                            weight_B = -1024;
-                        else :
-                            weight_B = 1024;
+                        weight_B = 1024
 
 
             sam_A = mybuffer[buffer_index]
@@ -2079,18 +2034,12 @@ def decorr_stereo_pass_cont(dpp, mybuffer, sample_count, buf_idx) :
                 if (mybuffer[buffer_index + 1] != 0 and sam_A != 0) :
                     weight_A = weight_A - delta
                     if weight_A < -1024 :
-                        if (weight_A < 0) :
-                            weight_A = -1024;
-                        else :
-                            weight_A = 1024;
+                        weight_A = -1024
             else :
                 if (mybuffer[buffer_index + 1] != 0 and sam_A != 0) :
                     weight_A = weight_A + delta
                     if (weight_A > 1024) :
-                        if (weight_A < 0) :
-                            weight_A = -1024;
-                        else :
-                            weight_A = 1024;
+                        weight_A = 1024
 
 
         buffer_index = end_index
@@ -2107,18 +2056,12 @@ def decorr_stereo_pass_cont(dpp, mybuffer, sample_count, buf_idx) :
                 if (mybuffer[buffer_index - 1] != 0 and sam_A != 0 ) :
                     weight_A = weight_A - delta
                     if weight_A < -1024 :
-                        if (weight_A < 0) :
-                            weight_A = -1024;
-                        else :
-                            weight_A = 1024;
+                        weight_A = -1024
             else :
                 if (mybuffer[buffer_index - 1] != 0 and sam_A != 0 ) :
                     weight_A = weight_A + delta
                     if weight_A > 1024 :
-                        if (weight_A < 0) :
-                            weight_A = -1024
-                        else :
-                            weight_A = 1024
+                        weight_A = 1024
 
             sam_A = mybuffer[buffer_index + 1]
             mybuffer[buffer_index + 1] = ((weight_B * mybuffer[buffer_index - 2] + 512) >> 10) + sam_A
@@ -2127,18 +2070,12 @@ def decorr_stereo_pass_cont(dpp, mybuffer, sample_count, buf_idx) :
                 if (mybuffer[buffer_index - 2] != 0 and sam_A != 0 ) :
                     weight_B = weight_B - delta
                     if weight_B < -1024 :
-                        if (weight_B < 0) :
-                            weight_B = -1024
-                        else :
-                            weight_B = 1024
+                        weight_B = -1024
             else :
                 if (mybuffer[buffer_index - 2] != 0 and sam_A != 0 ) :
                     weight_B = weight_B + delta
                     if weight_B > 1024 :
-                        if (weight_B < 0) :
-                            weight_B = -1024
-                        else :
-                            weight_B = 1024
+                        weight_B = 1024
 
         buffer_index = end_index
         
@@ -2152,15 +2089,23 @@ def decorr_stereo_pass_cont(dpp, mybuffer, sample_count, buf_idx) :
             sam_A = mybuffer[buffer_index]
             
             mybuffer[buffer_index] = ((weight_A * mybuffer[tptr] + 512) >> 10) + sam_A
-        
-            if (mybuffer[tptr] != 0 and sam_A != 0) :
-                weight_A = weight_A + (((mybuffer[tptr] ^ sam_A) >> 30) | 1) * delta;
+
+            if (mybuffer[tptr] != 0 and sam_A != 0) : 
+                if (mybuffer[tptr] ^ sam_A) < 0 :
+                    weight_A -= delta; 
+                else :
+                    weight_A += delta;
+
 
             sam_A = mybuffer[buffer_index + 1]
             mybuffer[buffer_index + 1] = ((weight_B * mybuffer[tptr + 1] + 512) >> 10) + sam_A
 
-            if (mybuffer[tptr + 1] != 0 and sam_A != 0) :
-                weight_B += (((mybuffer[tptr + 1] ^ sam_A) >> 30) | 1) * delta;
+            if (mybuffer[tptr + 1] != 0 and sam_A != 0) : 
+                if (mybuffer[tptr + 1] ^ sam_A) < 0 :
+                    weight_B -= delta; 
+                else :
+                    weight_B += delta;
+
 
             tptr += 2;
 
@@ -2576,10 +2521,7 @@ def get_words(nsamples, flags, w, bs, buffer) :
         high = 0
 
         if ((flags & (MONO_FLAG | FALSE_STEREO)) == 0) : # if not mono
-            if (entidx == 1) :
-                entidx = 0;
-            else :
-                entidx = 1;
+            entidx = 1 - entidx
 
         if ((w.c[0].median[0] & ~1) == 0 and w.holding_zero == 0 and w.holding_one == 0
             and (w.c[1].median[0] & ~1) == 0) :
@@ -2596,7 +2538,7 @@ def get_words(nsamples, flags, w, bs, buffer) :
                     buffer_counter = buffer_counter + 1
                     continue;
             else :
-                # section called by mono code NOTE NOTE NOTE NOTE NOTE NOTE NOTE
+                # section called by mono code
                 cbits = 0;
                 bs = getbit(bs);
 
@@ -2697,7 +2639,7 @@ def get_words(nsamples, flags, w, bs, buffer) :
                         mask = 1
                         ones_count = 0
                         
-                        # We decrement cbits before entering while conditioo. This is to reflect the preincrement that is used
+                        # We decrement cbits before entering while condition. This is to reflect the preincrement that is used
                         # in the Java version of the code
 
                         cbits = cbits - 1
@@ -2830,7 +2772,7 @@ def read_code( bs, maxcode) :
     code &= (1L << (bitcount - 1)) - 1
 
     if (code >= extras) :
-        code = (code << 1) - extras
+        code = (code + code) - extras
 
         bs = getbit(bs)
 
