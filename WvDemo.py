@@ -3,7 +3,7 @@
 **
 ** Sample program for use with WavPack.py
 **
-** Copyright (c) 2007-2011 Peter McQuillan
+** Copyright (c) 2007-2013 Peter McQuillan
 **
 ** All Rights Reserved.
 **                       

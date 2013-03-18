@@ -3,7 +3,7 @@
 **
 ** Implementation of WavPack decoder written in Python
 **
-** Copyright (c) 2007-2011 Peter McQuillan
+** Copyright (c) 2007-2013 Peter McQuillan
 **
 ** All Rights Reserved.
 **                       
@@ -811,13 +811,14 @@ def getbits(nbits, bs) :
             bs = bs_read(bs);
         uns_buf = ord(bs.buf[bs.buf_index]) & 0xff
         bs.sr = bs.sr | (uns_buf << bs.bc); # values in buffer must be unsigned
+        bs.sr = bs.sr & 0xffffffff # bs.sr is unsigned 32 bit
         bs.bc += 8;
 
     value = bs.sr;
 
     if (bs.bc > 32) :
         bs.bc -= (nbits);
-        bs.sr = (bs.ptr) >> (8 - bs.bc);
+        bs.sr = (ord(bs.buf[bs.buf_index]) & 0xff) >> (8 - bs.bc);
     else :
         bs.bc -= (nbits);
         bs.sr >>= (nbits);
@@ -1535,10 +1536,10 @@ def unpack_samples(wpc, mybuffer, sample_count) :
         bf_abs = 0
 
         for q in range(0, sample_count) :
-            if mybuffer[buffer_counter] < 0 :
-                bf_abs = -mybuffer[buffer_counter]
+            if mybuffer[q] < 0 :
+                bf_abs = -mybuffer[q]
             else :
-                bf_abs = mybuffer[buffer_counter]
+                bf_abs = mybuffer[q]
 
             if (bf_abs > mute_limit) :
                 i = q
