@@ -980,7 +980,7 @@ def read_metadata_buff(wpc, wpmd) :
         while (bytes_to_read > wpc.READ_BUFFER_SIZE) :
             try :
                 wpc.read_buffer = wpc.infile.read( wpc.READ_BUFFER_SIZE )
-                bytes_read = wpc.READ_BUFFER_SIZE
+                bytes_read = len(wpc.read_buffer)
                 if(bytes_read != wpc.READ_BUFFER_SIZE) :
                     return FALSE;
             except:
@@ -996,7 +996,7 @@ def read_metadata_buff(wpc, wpmd) :
         try :
             wpc.read_buffer = wpc.infile.read(bytes_to_read)
             wpmd.data = wpc.read_buffer
-            bytes_read = bytes_to_read
+            bytes_read = len(wpc.read_buffer)
             if(bytes_read !=  bytes_to_read) :
                 wpmd.hasdata = FALSE;
                 return FALSE;
@@ -2280,9 +2280,6 @@ def fixup_samples( wps, mybuffer, sample_count) :
             max_value = 8388607
             max_shifted = (max_value >> shift) << shift
 
-        except case (3):
-            pass
-            
         except :
             min_value = 0x80000000
             min_shifted = (min_value >> shift) << shift
